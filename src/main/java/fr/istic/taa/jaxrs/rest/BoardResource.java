@@ -1,5 +1,6 @@
 package fr.istic.taa.jaxrs.rest;
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import fr.istic.taa.jaxrs.dao.BoardDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
