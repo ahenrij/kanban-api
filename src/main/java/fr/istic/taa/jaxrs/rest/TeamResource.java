@@ -91,7 +91,7 @@ public class TeamResource {
     @GET
     @Path("/boards")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getBoards(@PathParam("id") Long teamId) {
+    public Response getTeams(@PathParam("id") Long teamId) {
         // return pet
         Team team = teamDao.findOne(teamId);
         List<Board> boards = new ArrayList<>();
@@ -101,6 +101,14 @@ public class TeamResource {
         } else {
             return Response.ok().entity(boards).build();
         }
+    }
+
+    @GET
+    public Response getTeams(@Context SecurityContext securityContext) {
+        String userId = securityContext.getUserPrincipal().getName();
+
+        List<Team> teams = teamDao.getTeamsByUserId(Long.parseLong(userId));
+        return Response.ok().entity(teams).build();
     }
 
 }
