@@ -16,7 +16,7 @@ public class UserDao extends AbstractJpaDao<Long, User> {
     public Optional<User> login(Credentials credentials) {
 
         String query = "select u from " + clazz.getName() + " as u where u.email = ?1 and u.password = ?2";
-        System.out.println(Hashing.hash(credentials.getPassword()));
+
         try {
             return Optional.of(entityManager.createQuery(query, clazz)
                     .setParameter(1, credentials.getEmail())

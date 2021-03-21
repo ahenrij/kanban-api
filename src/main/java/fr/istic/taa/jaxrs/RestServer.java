@@ -15,7 +15,7 @@ public class RestServer {
     public static void main(String[] args) {
 
         UndertowJaxrsServer ut = new UndertowJaxrsServer();
-        TestApplication ta = new TestApplication();
+        RestApplication ta = new RestApplication();
         ut.deploy(ta);
         ut.start(
                 Undertow.builder().addHttpListener(8090, "localhost")

@@ -23,7 +23,7 @@ public class SectionResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createSection( @Parameter(description = "Section to create") Section section) {
+    public Response createSection(@Context SecurityContext securityContext, @Parameter(description = "Section to create") Section section) {
         sectionDao.save(section);
         return Response.ok().entity(section).build();
     }

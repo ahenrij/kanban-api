@@ -3,6 +3,7 @@ package fr.istic.taa.jaxrs.rest;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.UserDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -16,6 +17,7 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
+    @Operation(summary = "Get user informations by id")
     public Response getUserById(@PathParam("id") Long userId) {
         // return pet
         User user = userDao.findOne(userId);

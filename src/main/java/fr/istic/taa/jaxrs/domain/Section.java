@@ -1,5 +1,7 @@
 package fr.istic.taa.jaxrs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -10,6 +12,7 @@ public class Section implements Serializable {
     private long id;
     private String title;
     private int position;
+    @JsonIgnore
     private Board board;
     private List<Card> cards;
 
