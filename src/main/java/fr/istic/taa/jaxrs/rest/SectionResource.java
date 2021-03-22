@@ -1,12 +1,10 @@
 package fr.istic.taa.jaxrs.rest;
 
-import fr.istic.taa.jaxrs.dao.CardDao;
+import fr.istic.taa.jaxrs.dao.BoardDao;
 import fr.istic.taa.jaxrs.dao.SectionDao;
-import fr.istic.taa.jaxrs.dao.TagDao;
-import fr.istic.taa.jaxrs.dao.UserDao;
-import fr.istic.taa.jaxrs.domain.Card;
 import fr.istic.taa.jaxrs.domain.Section;
-import fr.istic.taa.jaxrs.utils.Secured;
+import fr.istic.taa.jaxrs.dto.SectionDto;
+import fr.istic.taa.jaxrs.dto.mappers.SectionMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -20,10 +18,16 @@ import javax.ws.rs.core.SecurityContext;
 public class SectionResource {
 
     SectionDao sectionDao = new SectionDao();
+    BoardDao boardDao = new BoardDao();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createSection(@Context SecurityContext securityContext, @Parameter(description = "Section to create") Section section) {
+    public Response createSection(@Context SecurityContext securityContext, @Parameter(description = "Section to create") SectionDto sectionDto) {
+
+        Long boardId = sectionDto.getBoardId();
+        Section section = SectionMapper.INSTANCE.map(sectionDto);
+        section.setBoard(boardDao.findOne(boardId));
+
         sectionDao.save(section);
         return Response.ok().entity(section).build();
     }
@@ -33,10 +37,9 @@ public class SectionResource {
     public Response deleteSection(@Context SecurityContext securityContext, @PathParam("id") Long sectionId) {
         try {
             Section section = sectionDao.findOne(sectionId);
-
             sectionDao.delete(section);
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
         return Response.ok().build();
     }
@@ -46,9 +49,10 @@ public class SectionResource {
     public Response updateSection(@Parameter(description = "Section to update") Section section) {
         try {
             Section sectionOld = sectionDao.findOne(section.getId());
+            section.setBoard(sectionOld.getBoard());
             sectionDao.update(sectionOld);
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
         return Response.ok().entity(section).build();
     }

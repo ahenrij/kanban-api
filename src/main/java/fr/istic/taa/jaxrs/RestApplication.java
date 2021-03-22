@@ -38,6 +38,7 @@ public class RestApplication extends Application {
         clazzes.add(AuthFilter.class);
         clazzes.add(UserResource.class);
         clazzes.add(BoardResource.class);
+        clazzes.add(SectionResource.class);
         clazzes.add(CardResource.class);
         // Swagger
         clazzes.add(SwaggerResource.class);

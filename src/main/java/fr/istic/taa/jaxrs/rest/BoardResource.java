@@ -42,6 +42,19 @@ public class BoardResource {
         return Response.ok().entity(boards).build();
     }
 
+
+    @GET
+    @Path("/{id}")
+    public Response getBoard(@PathParam("id") Long boardId) {
+
+        try {
+            Board board = boardDao.getBoard(boardId);
+            return Response.ok(board).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
+    }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBoard(@Parameter(description = "Board to update for user") Board board, @Context SecurityContext securityContext) {

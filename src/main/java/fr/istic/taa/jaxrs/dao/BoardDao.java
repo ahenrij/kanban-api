@@ -19,4 +19,12 @@ public class BoardDao extends AbstractJpaDao<Long, Board> {
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+    public Board getBoard(Long boardId) {
+
+        return (Board) this.entityManager
+                .createQuery("SELECT b FROM " + clazz.getName() + " b JOIN FETCH b.sections s WHERE b.id = :boardId")
+                .setParameter("boardId", boardId)
+                .getSingleResult();
+    }
 }
