@@ -1,5 +1,6 @@
 package fr.istic.taa.jaxrs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.istic.taa.jaxrs.utils.Hashing;
 
 import javax.persistence.*;
@@ -13,10 +14,15 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    @JsonIgnore
     private String password;
+    @JsonIgnore
     private List<Board> boards;
+    @JsonIgnore
     private List<Card> assignedCards;
+    @JsonIgnore
     private List<Team> teams;
+    @JsonIgnore
     private List<Team> managedTeams;
 
     public User() {

@@ -57,18 +57,10 @@ public class BoardResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBoard(@Parameter(description = "Board to update for user") Board board, @Context SecurityContext securityContext) {
-        String userId = securityContext.getUserPrincipal().getName();
-
+    public Response updateBoard(@Parameter(description = "Board to update for user") Board board) {
 
         try {
             Board boardOld = boardDao.findOne(board.getId());
-
-            //check if user is the real owner
-            if (boardOld.getOwner().getId() != Long.parseLong(userId)) {
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-
             board.setOwner(boardOld.getOwner());
             boardDao.update(board);
         } catch (Exception e) {

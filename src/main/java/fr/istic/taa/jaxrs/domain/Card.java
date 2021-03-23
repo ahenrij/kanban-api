@@ -17,6 +17,7 @@ public class Card implements Serializable {
     private String place;
     private String url;
     private String description;
+    @JsonIgnore
     private Section section;
     private List<Tag> tags;
     private List<User> assignees;

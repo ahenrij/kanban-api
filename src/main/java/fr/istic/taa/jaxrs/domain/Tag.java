@@ -1,5 +1,7 @@
 package fr.istic.taa.jaxrs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,6 +15,7 @@ public class Tag implements Serializable {
     private long id;
     private String name;
     private String color;
+    @JsonIgnore
     private List<Card> cards;
 
     @Id
