@@ -23,25 +23,10 @@ public class TagResource {
     @POST
     @Consumes("application/json")
     public Response addTag(@Parameter(description = "Tag object to save", required = true) Tag tag) {
-        // add user
+        // add tag
         TagDao tagDao = new TagDao();
         tagDao.save(tag);
         return Response.ok().entity("SUCCESS").build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    public Response deleteTag(@Context SecurityContext securityContext, @PathParam("id") Long tagId) {
-        try {
-            Tag tag = tagDao.findOne(tagId);
-
-            //TODO : check if user is the real owner
-
-            tagDao.delete(tag);
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
-        }
-        return Response.ok().build();
     }
 
     @PUT
@@ -49,11 +34,23 @@ public class TagResource {
     public Response updateTag(@Parameter(description = "Tag to update") Tag tag) {
          try {
             Tag tagOld = tagDao.findOne(tag.getId());
-            tagDao.update(tagOld);
+            tag.setCards(tagOld.getCards());
+            tagDao.update(tag);
         } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
+        return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
     }
         return Response.ok().entity(tag).build();
     }
 
+    @DELETE
+    @Path("/{id}")
+    public Response deleteTag(@Context SecurityContext securityContext, @PathParam("id") Long tagId) {
+        try {
+            Tag tag = tagDao.findOne(tagId);
+            tagDao.delete(tag);
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
 }
