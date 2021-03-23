@@ -39,10 +39,15 @@ public class CardResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateCard(@Parameter(description = "Card to update") CardDto cardDto) {
         try {
+            Card oldCard = cardDao.findOne(cardDto.getId());
             Card newCard = Mappers.INSTANCE.map(cardDto);
             if (cardDto.getSectionId() > 0) { // is defined
                 newCard.setSection(sectionDao.findOne(cardDto.getSectionId()));
             }
+
+            newCard.setTags(oldCard.getTags());
+            newCard.setAssignees(oldCard.getAssignees());
+
             cardDao.update(newCard);
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();

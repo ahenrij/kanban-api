@@ -89,7 +89,7 @@ public class Card implements Serializable {
         this.section = section;
     }
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "CardTag",
             joinColumns = @JoinColumn(name = "card_id"),
@@ -103,7 +103,7 @@ public class Card implements Serializable {
         this.tags = tags;
     }
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "CardUser",
             joinColumns = @JoinColumn(name = "card_id"),
