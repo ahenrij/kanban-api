@@ -28,7 +28,7 @@ public class TeamResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTeam(@Context SecurityContext securityContext,@Parameter(description = "Section to create") Team team) {
+    public Response createTeam(@Context SecurityContext securityContext, @Parameter(description = "Team to create") Team team) {
         //Get the current userId from context
         String userId = securityContext.getUserPrincipal().getName();
         team.setManager(userDao.findOne(Long.valueOf(userId)));
@@ -36,39 +36,46 @@ public class TeamResource {
         return Response.ok().entity(team).build();
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateTeam(@Parameter(description = "Team to update") Team team) {
+        try {
+            Team teamOld = teamDao.findOne(team.getId());
+            teamOld.setId(team.getId());
+            teamOld.setTitle(team.getTitle());
+            teamDao.update(teamOld);
+            return Response.ok().entity(teamOld).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
+    }
+
     @DELETE
     @Path("/{id}")
     public Response deleteTeam(@Context SecurityContext securityContext, @PathParam("id") Long teamId) {
         try {
             Team team = teamDao.findOne(teamId);
-
             teamDao.delete(team);
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
         return Response.ok().build();
     }
 
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateTeam(@Parameter(description = "Team to update") Section section) {
-        try {
-            Team teamOld = teamDao.findOne(section.getId());
-            teamDao.update(teamOld);
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
-        }
-        return Response.ok().entity(section).build();
+    @GET
+    public Response getTeams(@Context SecurityContext securityContext) {
+        String userId = securityContext.getUserPrincipal().getName();
+        List<Team> teams = teamDao.getTeamsByUserId(Long.parseLong(userId));
+        return Response.ok().entity(teams).build();
     }
 
     @GET
-    @Path("/members")
+    @Path("/{id}/member")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getMembers(@PathParam("id") Long teamId) {
         // return pet
         Team team = teamDao.findOne(teamId);
-        List<User> members = new ArrayList<>();
-        members = team.getMembers();
+        List<User> members = team.getMembers();
         if (members == null) {
             return Response.noContent().build();
         } else {
@@ -77,40 +84,35 @@ public class TeamResource {
     }
 
     @POST
+    @Path("/{id}/member")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response setMembers(@PathParam("id") Long teamId, List<User> members){
+    public Response addMember(@PathParam("id") Long teamId, User member) {
+
         Team team = teamDao.findOne(teamId);
-        if(team.getMembers().contains(members)){
+        List<User> members = team.getMembers();
+
+        if (members.contains(member)) {
             return Response.noContent().build();
-        }else {
+        } else {
+            members.add(member);
             team.setMembers(members);
+            teamDao.update(team);
             return Response.ok().entity(team).build();
         }
     }
 
     @GET
-    @Path("/boards")
+    @Path("/{id}/board")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getTeams(@PathParam("id") Long teamId) {
-        // return pet
+    public Response getBoards(@PathParam("id") Long teamId) {
+
         Team team = teamDao.findOne(teamId);
-        List<Board> boards = new ArrayList<>();
-        boards = team.getBoards();
+        List<Board> boards = team.getBoards();
         if (boards == null) {
             return Response.noContent().build();
         } else {
             return Response.ok().entity(boards).build();
         }
     }
-
-    @GET
-    public Response getTeams(@Context SecurityContext securityContext) {
-        String userId = securityContext.getUserPrincipal().getName();
-
-        List<Team> teams = teamDao.getTeamsByUserId(Long.parseLong(userId));
-        return Response.ok().entity(teams).build();
-    }
-
-
 }
 

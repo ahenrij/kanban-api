@@ -5,6 +5,7 @@ import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
 import fr.istic.taa.jaxrs.domain.Tag;
 import fr.istic.taa.jaxrs.domain.User;
+import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.SecurityContext;
 
 
 @Path("/tag")
+@Secured
 @Produces({"application/json"})
 public class TagResource {
 
