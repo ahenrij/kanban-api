@@ -20,15 +20,6 @@ public class UserDto implements Serializable {
         this.email = email;
     }
 
-    public static UserDto fromUser(User user) {
-        return new UserDto(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail()
-        );
-    }
-
     public long getId() {
         return id;
     }

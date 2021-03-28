@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 
 @Path("/tag")
@@ -21,27 +22,44 @@ import javax.ws.rs.core.SecurityContext;
 public class TagResource {
 
     private final TagDao tagDao = new TagDao();
+    private final UserDao userDao = new UserDao();
 
     @POST
     @Consumes("application/json")
-    public Response addTag(@Parameter(description = "Tag object to save", required = true) Tag tag) {
-        // add tag
-        TagDao tagDao = new TagDao();
-        tagDao.save(tag);
-        return Response.ok().entity("SUCCESS").build();
+    public Response createTag(@Context SecurityContext securityContext, @Parameter(description = "Tag object to save", required = true) Tag tag) {
+        try {
+            String userId = securityContext.getUserPrincipal().getName();
+            tag.setOwner(userDao.findOne(Long.valueOf(userId)));
+            tagDao.save(tag);
+            return Response.ok().entity(tag).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
+    }
+
+    @GET
+    public Response getTags(@Context SecurityContext securityContext) {
+        try {
+            String userId = securityContext.getUserPrincipal().getName();
+            List<Tag> tags = userDao.findOne(Long.valueOf(userId)) .getTags();
+            return Response.ok().entity(tags).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateTag(@Parameter(description = "Tag to update") Tag tag) {
-         try {
+        try {
             Tag tagOld = tagDao.findOne(tag.getId());
-            tag.setCards(tagOld.getCards());
-            tagDao.update(tag);
+            tagOld.setName(tag.getName());
+            tagOld.setColor(tag.getColor());
+            tagDao.update(tagOld);
+            return Response.ok().entity(tag).build();
         } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
-    }
-        return Response.ok().entity(tag).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
     }
 
     @DELETE

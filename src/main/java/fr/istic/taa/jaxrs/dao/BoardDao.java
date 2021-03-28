@@ -15,15 +15,15 @@ public class BoardDao extends AbstractJpaDao<Long, Board> {
     public List<Board> getBoardsByUserId(Long userId) {
 
         return this.entityManager
-                .createQuery("SELECT b FROM " + clazz.getName() + " b WHERE b.owner.id = :userId")
+                .createQuery("SELECT b FROM " + clazz.getName() + " b WHERE b.owner.id = :userId", clazz)
                 .setParameter("userId", userId)
                 .getResultList();
     }
 
     public Board getBoard(Long boardId) {
 
-        return (Board) this.entityManager
-                .createQuery("SELECT b FROM " + clazz.getName() + " b JOIN FETCH b.sections s WHERE b.id = :boardId")
+        return this.entityManager
+                .createQuery("SELECT b FROM " + clazz.getName() + " b JOIN FETCH b.sections s WHERE b.id = :boardId", clazz)
                 .setParameter("boardId", boardId)
                 .getSingleResult();
     }

@@ -40,7 +40,6 @@ public class Team implements Serializable {
         return manager;
     }
 
-    @ManyToOne
     public void setManager(User manager) {
         this.manager = manager;
     }

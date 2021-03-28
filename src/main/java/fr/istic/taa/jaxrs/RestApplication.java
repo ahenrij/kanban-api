@@ -40,6 +40,8 @@ public class RestApplication extends Application {
         clazzes.add(BoardResource.class);
         clazzes.add(SectionResource.class);
         clazzes.add(CardResource.class);
+        clazzes.add(TagResource.class);
+        clazzes.add(TeamResource.class);
         // Swagger
         clazzes.add(SwaggerResource.class);
 

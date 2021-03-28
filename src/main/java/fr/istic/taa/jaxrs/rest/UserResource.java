@@ -3,6 +3,7 @@ package fr.istic.taa.jaxrs.rest;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.UserDto;
+import fr.istic.taa.jaxrs.dto.mappers.Mappers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
@@ -24,7 +25,7 @@ public class UserResource {
         if (user == null) {
             return Response.noContent().build();
         } else {
-            return Response.accepted().entity(UserDto.fromUser(user)).build();
+            return Response.accepted().entity(Mappers.INSTANCE.map(user)).build();
         }
     }
 
@@ -38,7 +39,7 @@ public class UserResource {
         }
 
         userToUpdate = userDao.update(user);
-        return Response.accepted().entity(UserDto.fromUser(userToUpdate)).build();
+        return Response.accepted().entity(Mappers.INSTANCE.map(userToUpdate)).build();
     }
 
     @POST

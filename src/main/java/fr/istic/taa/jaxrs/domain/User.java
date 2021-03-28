@@ -24,6 +24,8 @@ public class User implements Serializable {
     private List<Team> teams;
     @JsonIgnore
     private List<Team> managedTeams;
+    @JsonIgnore
+    private List<Tag> tags;
 
     public User() {
 
@@ -113,5 +115,14 @@ public class User implements Serializable {
 
     public void setManagedTeams(List<Team> managedTeams) {
         this.managedTeams = managedTeams;
+    }
+
+    @OneToMany(mappedBy = "owner")
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 }
