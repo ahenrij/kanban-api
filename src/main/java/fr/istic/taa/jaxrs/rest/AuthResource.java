@@ -5,11 +5,11 @@ import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.Credentials;
 import fr.istic.taa.jaxrs.dto.UserDto;
-import fr.istic.taa.jaxrs.dto.mappers.Mappers;
 import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Hashing;
 import fr.istic.taa.jaxrs.utils.JwtUtil;
 import fr.istic.taa.jaxrs.utils.Secured;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.json.JSONObject;
 
@@ -18,7 +18,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.Map;
 import java.util.Optional;
 
 @Path("/")
@@ -30,7 +29,8 @@ public class AuthResource {
     @POST
     @Path("login")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response login(@Parameter(description = "Login credentials", required = true) Credentials credentials) {
+    @Operation(summary = "Authenticate user with credentials.", description = "Returns user's information with access token.")
+    public Response login(@Parameter(description = "Login Credentials", required = true) Credentials credentials) {
 
         Optional<User> user = userDao.login(credentials);
         if (!user.isPresent()) {
@@ -39,7 +39,7 @@ public class AuthResource {
 
         UserDto userDto = UserMapper.INSTANCE.map(user.get());
 
-        //generate token and add it to JSON result
+        //Generate token and add it to JSON result
         String token = JwtUtil.generateToken(userDto);
         JSONObject result = new JSONObject((new Gson()).toJson(userDto));
         result.put("accessToken", token);
@@ -50,7 +50,8 @@ public class AuthResource {
     @POST
     @Path("register")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response register(@Parameter(description = "User object to register", required = true) User user) {
+    @Operation(summary = "Register a new user.")
+    public Response register(@Parameter(description = "User to register", required = true) User user) {
 
         //Hash password before saving
         user.setPassword(Hashing.hash(user.getPassword()));
@@ -61,7 +62,8 @@ public class AuthResource {
     @GET
     @Path("token")
     @Secured
-    public Response getToken(@Context SecurityContext securityContext) {
+    @Operation(summary = "Refresh token of current authenticated user.", description = "Returns new access token and user's id.")
+    public Response refreshToken(@Context SecurityContext securityContext) {
 
         String userId = securityContext.getUserPrincipal().getName();
 
