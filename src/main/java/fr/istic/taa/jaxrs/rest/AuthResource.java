@@ -6,6 +6,7 @@ import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.Credentials;
 import fr.istic.taa.jaxrs.dto.UserDto;
 import fr.istic.taa.jaxrs.dto.mappers.Mappers;
+import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Hashing;
 import fr.istic.taa.jaxrs.utils.JwtUtil;
 import fr.istic.taa.jaxrs.utils.Secured;
@@ -36,7 +37,7 @@ public class AuthResource {
             return Response.status(Response.Status.FORBIDDEN).entity("Bad credentials").build();
         }
 
-        UserDto userDto = Mappers.INSTANCE.map(user.get());
+        UserDto userDto = UserMapper.INSTANCE.map(user.get());
 
         //generate token and add it to JSON result
         String token = JwtUtil.generateToken(userDto);
@@ -53,9 +54,8 @@ public class AuthResource {
 
         //Hash password before saving
         user.setPassword(Hashing.hash(user.getPassword()));
-
         userDao.save(user);
-        return Response.ok().entity(Mappers.INSTANCE.map(user)).build();
+        return Response.ok().entity(UserMapper.INSTANCE.map(user)).build();
     }
 
     @GET
@@ -66,7 +66,7 @@ public class AuthResource {
         String userId = securityContext.getUserPrincipal().getName();
 
         User user = userDao.findOne(Long.valueOf(userId));
-        String token = JwtUtil.generateToken(Mappers.INSTANCE.map(user));
+        String token = JwtUtil.generateToken(UserMapper.INSTANCE.map(user));
 
         JSONObject result = new JSONObject();
         result.put("userId", userId);

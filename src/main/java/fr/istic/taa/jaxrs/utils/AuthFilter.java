@@ -14,6 +14,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
 
+
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -64,6 +65,7 @@ public class AuthFilter implements ContainerRequestFilter {
     private void validateToken(String token, ContainerRequestContext requestContext) throws Exception {
 
         UserDto userDto = JwtUtil.parseToken(token);
+
         final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
         requestContext.setSecurityContext(new SecurityContext() {
             @Override

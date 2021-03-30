@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 public class Tag implements Serializable {
@@ -14,8 +13,6 @@ public class Tag implements Serializable {
     private String color;
     @JsonIgnore
     private User owner;
-    @JsonIgnore
-    private List<Card> cards;
 
     @Id
     @GeneratedValue
@@ -43,21 +40,12 @@ public class Tag implements Serializable {
         this.color = color;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public User getOwner() {
         return owner;
     }
 
     public void setOwner(User owner) {
         this.owner = owner;
-    }
-
-    @ManyToMany(mappedBy = "tags")
-    public List<Card> getCards() {
-        return cards;
-    }
-
-    public void setCards(List<Card> cards) {
-        this.cards = cards;
     }
 }

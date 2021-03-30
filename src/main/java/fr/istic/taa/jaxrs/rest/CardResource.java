@@ -10,6 +10,7 @@ import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.CardDto;
 import fr.istic.taa.jaxrs.dto.UserDto;
 import fr.istic.taa.jaxrs.dto.mappers.Mappers;
+import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Parameter;
 
@@ -99,7 +100,7 @@ public class CardResource {
             User user = userDao.findOne(userId);
             card.getAssignees().add(user);
             cardDao.update(card);
-            return Response.ok().entity(Mappers.INSTANCE.map(user)).build();
+            return Response.ok().entity(UserMapper.INSTANCE.map(user)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
@@ -129,7 +130,7 @@ public class CardResource {
             User user = userDao.findOne(userId);
             card.getAssignees().remove(user);
             cardDao.update(card);
-            return Response.ok().entity(Mappers.INSTANCE.map(user)).build();
+            return Response.ok().entity(UserMapper.INSTANCE.map(user)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }

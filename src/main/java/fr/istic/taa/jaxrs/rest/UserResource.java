@@ -3,7 +3,8 @@ package fr.istic.taa.jaxrs.rest;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.UserDto;
-import fr.istic.taa.jaxrs.dto.mappers.Mappers;
+import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
+import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
@@ -11,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/user")
+@Secured
 @Produces({"application/json"})
 public class UserResource {
 
@@ -18,36 +20,24 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
-    @Operation(summary = "Get user informations by id")
+    @Operation(summary = "Get user's information by id")
     public Response getUserById(@PathParam("id") Long userId) {
-        // return pet
+        // return user
         User user = userDao.findOne(userId);
-        if (user == null) {
-            return Response.noContent().build();
-        } else {
-            return Response.accepted().entity(Mappers.INSTANCE.map(user)).build();
-        }
+        return Response.accepted().entity(UserMapper.INSTANCE.map(user)).build();
     }
 
     @PUT
     @Consumes("application/json")
-    public Response updateUser(@Parameter(required = true, description = "User to update") User user) {
+    @Operation(summary = "Update user information", description = "Update User entity attributes from all UserDto attrs.")
+    public Response updateUser(@Parameter(required = true, description = "User to update") UserDto userDto) {
 
-        User userToUpdate = userDao.findOne(user.getId());
-        if (userToUpdate == null) {
-            return Response.noContent().build();
+        User user = userDao.findOne(userDto.getId());
+        if (user == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No user found !").build();
         }
-
-        userToUpdate = userDao.update(user);
-        return Response.accepted().entity(Mappers.INSTANCE.map(userToUpdate)).build();
-    }
-
-    @POST
-    @Consumes("application/json")
-    public Response addUser(@Parameter(description = "User object to save", required = true) User user) {
-        // add user
-        UserDao userDao = new UserDao();
-        userDao.save(user);
-        return Response.ok().entity("SUCCESS").build();
+        UserMapper.INSTANCE.updateAttrs(userDto, user);
+        userDao.update(user);
+        return Response.accepted().entity(userDto).build();
     }
 }

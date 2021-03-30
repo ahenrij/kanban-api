@@ -6,8 +6,11 @@ import fr.istic.taa.jaxrs.domain.Board;
 import fr.istic.taa.jaxrs.domain.Section;
 import fr.istic.taa.jaxrs.domain.Team;
 import fr.istic.taa.jaxrs.domain.User;
+import fr.istic.taa.jaxrs.dto.TeamDto;
 import fr.istic.taa.jaxrs.dto.UserDto;
+import fr.istic.taa.jaxrs.dto.mappers.TeamMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -28,6 +31,7 @@ public class TeamResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Create a new team entity", description = "Create new Team entity with current authorized user as owner.")
     public Response createTeam(@Context SecurityContext securityContext, @Parameter(description = "Team to create") Team team) {
         //Get the current userId from context
         String userId = securityContext.getUserPrincipal().getName();
@@ -38,13 +42,12 @@ public class TeamResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateTeam(@Parameter(description = "Team to update") Team team) {
+    public Response updateTeam(@Parameter(description = "Team to update") TeamDto teamDto) {
         try {
-            Team teamOld = teamDao.findOne(team.getId());
-            teamOld.setId(team.getId());
-            teamOld.setTitle(team.getTitle());
-            teamDao.update(teamOld);
-            return Response.ok().entity(teamOld).build();
+            Team team = teamDao.findOne(teamDto.getId());
+            TeamMapper.INSTANCE.updateAttrs(teamDto, team);
+            teamDao.update(team);
+            return Response.ok().entity(team).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }

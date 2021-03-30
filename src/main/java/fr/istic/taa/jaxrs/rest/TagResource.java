@@ -2,12 +2,12 @@ package fr.istic.taa.jaxrs.rest;
 
 import fr.istic.taa.jaxrs.dao.TagDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
-import fr.istic.taa.jaxrs.domain.Board;
 import fr.istic.taa.jaxrs.domain.Tag;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Parameter;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -41,7 +41,7 @@ public class TagResource {
     public Response getTags(@Context SecurityContext securityContext) {
         try {
             String userId = securityContext.getUserPrincipal().getName();
-            List<Tag> tags = userDao.findOne(Long.valueOf(userId)) .getTags();
+            List<Tag> tags = tagDao.getTagsByUserId(Long.parseLong(userId));
             return Response.ok().entity(tags).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
