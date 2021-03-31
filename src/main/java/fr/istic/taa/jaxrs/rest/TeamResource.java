@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/team")
@@ -99,7 +100,7 @@ public class TeamResource {
         String userId = securityContext.getUserPrincipal().getName();
 
         Team team = teamDao.findOne(teamId);
-        List<User> members = team.getMembers();
+        List<User> members = new ArrayList<>(team.getMembers());
         members.add(team.getManager()); //add the manager
 
         //check if user is member of the team
@@ -112,24 +113,39 @@ public class TeamResource {
     }
 
     @POST
-    @Path("/{id}/member")
+    @Path("/{id}/member/{member_id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addMember(@PathParam("id") Long teamId, User member) {
+    @Operation(summary = "Add a member to the Team")
+    public Response addMember(@PathParam("id") Long teamId, @PathParam("member_id") Long memberId) {
 
         //get user by id or email ?
         Team team = teamDao.findOne(teamId);
         List<User> members = team.getMembers();
 
-        boolean exists = members.stream().anyMatch(user -> user.getEmail().equals(member.getEmail()));
-        if (exists) {
+        boolean isAlreadyMember = members.stream().anyMatch(user -> user.getId() == memberId);
+        if (isAlreadyMember) {
             return Response.noContent().build();
         }
 
-        members.add(member);
-        team.setMembers(members);
+        members.add(userDao.getReference(memberId));
         teamDao.update(team);
 
-        return Response.ok().entity(member).build();
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{id}/member/{member_id}")
+    @Operation(summary = "Remove a member from the Team")
+    public Response removeMember(@PathParam("id") Long teamId, @PathParam("member_id") Long memberId) {
+
+        try {
+            Team team = teamDao.findOne(teamId);
+            team.getMembers().remove(userDao.getReference(memberId));
+            teamDao.update(team);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
     }
 
     @GET
@@ -137,8 +153,12 @@ public class TeamResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getBoards(@PathParam("id") Long teamId) {
 
-        List<Board> boards = teamDao.getTeamBoards(teamId);
-        return Response.ok().entity(boards).build();
+        try {
+            List<Board> boards = teamDao.getTeamBoards(teamId);
+            return Response.ok().entity(boards).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
     }
 }
 
