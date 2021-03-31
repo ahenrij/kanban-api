@@ -8,9 +8,11 @@ import fr.istic.taa.jaxrs.domain.Card;
 import fr.istic.taa.jaxrs.domain.Tag;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.CardDto;
+import fr.istic.taa.jaxrs.dto.mappers.CardMapper;
 import fr.istic.taa.jaxrs.dto.mappers.Mappers;
 import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -31,6 +33,7 @@ public class CardResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Create a new Card (in a Section).")
     public Response createCard(@Context SecurityContext securityContext, @Parameter(description = "Card to create") CardDto cardDto) {
 
         Long sectionId = cardDto.getSectionId();
@@ -43,18 +46,16 @@ public class CardResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a Card (and his Section eventually).")
     public Response updateCard(@Parameter(description = "Card to update") CardDto cardDto) {
         try {
-            Card oldCard = cardDao.findOne(cardDto.getId());
-            Card newCard = Mappers.INSTANCE.map(cardDto);
-            if (cardDto.getSectionId() > 0) { // is defined
-                newCard.setSection(sectionDao.findOne(cardDto.getSectionId()));
+            Card card = cardDao.findOne(cardDto.getId());
+            CardMapper.INSTANCE.updateAttrs(cardDto, card);
+
+            if (cardDto.getSectionId() > 0) { //sectionId is defined
+                card.setSection(sectionDao.getReference(cardDto.getSectionId()));
             }
-
-            newCard.setTags(oldCard.getTags());
-            newCard.setAssignees(oldCard.getAssignees());
-
-            cardDao.update(newCard);
+            cardDao.update(card);
             return Response.ok().entity(Mappers.INSTANCE.map(cardDto)).build();
 
         } catch (Exception e) {
@@ -64,9 +65,10 @@ public class CardResource {
 
     @DELETE
     @Path("/{id}")
+    @Operation(summary = "Delete a Card.")
     public Response deleteCard(@PathParam("id") Long cardId) {
         try {
-            Card card = cardDao.findOne(cardId);
+            Card card = cardDao.getReference(cardId);
             cardDao.delete(card);
             return Response.ok().build();
         } catch (Exception e) {
@@ -76,14 +78,14 @@ public class CardResource {
 
     @POST
     @Path("/{id}/tag/{tag_id}")
+    @Operation(summary = "Attach a Tag to Card.")
     public Response attachTag(@PathParam("id") Long cardId, @PathParam("tag_id") Long tagId) {
 
         try {
             Card card = cardDao.findOne(cardId);
-            Tag tag = tagDao.findOne(tagId);
-            card.getTags().add(tag);
+            card.getTags().add(tagDao.getReference(tagId));
             cardDao.update(card);
-            return Response.ok().entity(tag).build();
+            return Response.ok().build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
@@ -91,14 +93,14 @@ public class CardResource {
 
     @POST
     @Path("/{id}/assign/{user_id}")
+    @Operation(summary = "Attach an Assignee to Card.")
     public Response attachAssignee(@PathParam("id") Long cardId, @PathParam("user_id") Long userId) {
 
         try {
             Card card = cardDao.findOne(cardId);
-            User user = userDao.findOne(userId);
-            card.getAssignees().add(user);
+            card.getAssignees().add(userDao.getReference(userId));
             cardDao.update(card);
-            return Response.ok().entity(UserMapper.INSTANCE.map(user)).build();
+            return Response.ok().build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
@@ -106,6 +108,7 @@ public class CardResource {
 
     @DELETE
     @Path("/{id}/tag/{tag_id}")
+    @Operation(summary = "Detach a Tag from Card.")
     public Response detachTag(@PathParam("id") Long cardId, @PathParam("tag_id") Long tagId) {
 
         try {
@@ -121,6 +124,7 @@ public class CardResource {
 
     @DELETE
     @Path("/{id}/assign/{user_id}")
+    @Operation(summary = "Detach an Assignee from Card.")
     public Response detachAssignee(@PathParam("id") Long cardId, @PathParam("user_id") Long userId) {
 
         try {
