@@ -44,9 +44,9 @@ public class SectionResource {
         try {
             Section section = sectionDao.findOne(sectionDto.getId());
             SectionMapper.INSTANCE.updateAttrs(sectionDto, section);
+
             sectionDao.update(section);
             return Response.ok().entity(sectionDto).build();
-
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
