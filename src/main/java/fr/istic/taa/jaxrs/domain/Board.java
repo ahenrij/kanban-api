@@ -63,7 +63,7 @@ public class Board implements Serializable {
         this.owner = owner;
     }
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     public List<Section> getSections() {
         return sections;
     }
@@ -72,7 +72,7 @@ public class Board implements Serializable {
         this.sections = sections;
     }
 
-    @ManyToMany(mappedBy = "boards")
+    @ManyToMany(mappedBy = "boards", fetch = FetchType.LAZY)
     public List<Team> getTeams() {
         return teams;
     }

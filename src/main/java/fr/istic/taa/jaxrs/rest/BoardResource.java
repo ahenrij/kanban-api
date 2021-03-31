@@ -2,9 +2,15 @@ package fr.istic.taa.jaxrs.rest;
 
 import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import fr.istic.taa.jaxrs.dao.BoardDao;
+import fr.istic.taa.jaxrs.dao.TeamDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
+import fr.istic.taa.jaxrs.domain.Team;
+import fr.istic.taa.jaxrs.domain.User;
+import fr.istic.taa.jaxrs.dto.BoardDto;
+import fr.istic.taa.jaxrs.dto.mappers.BoardMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -21,9 +27,11 @@ public class BoardResource {
 
     private final UserDao userDao = new UserDao();
     private final BoardDao boardDao = new BoardDao();
+    private final TeamDao teamDao = new TeamDao();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Create a new Board and set current user as owner")
     public Response createBoard(@Context SecurityContext securityContext, @Parameter(description = "Board to create for user") Board board) {
 
         //Get the current userId from context
@@ -35,16 +43,20 @@ public class BoardResource {
     }
 
     @GET
+    @Operation(summary = "Get current user's Boards list")
     public Response getBoards(@Context SecurityContext securityContext) {
+
         String userId = securityContext.getUserPrincipal().getName();
 
         List<Board> boards = boardDao.getBoardsByUserId(Long.parseLong(userId));
+
         return Response.ok().entity(boards).build();
     }
 
 
     @GET
     @Path("/{id}")
+    @Operation(summary = "Get Board's content", description = "Get board's sections, cards, and tags...")
     public Response getBoard(@PathParam("id") Long boardId) {
 
         try {
@@ -57,30 +69,54 @@ public class BoardResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBoard(@Parameter(description = "Board to update for user") Board board) {
+    @Operation(summary = "Update Board's attributes")
+    public Response updateBoard(@Parameter(description = "Board to update") BoardDto boardDto) {
 
         try {
-            Board boardOld = boardDao.findOne(board.getId());
-            board.setOwner(boardOld.getOwner());
+            Board board = boardDao.findOne(boardDto.getId());
+            BoardMapper.INSTANCE.updateAttrs(boardDto, board);
             boardDao.update(board);
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
         }
-        return Response.ok().entity(board).build();
+        return Response.ok().entity(boardDto).build();
     }
 
     @DELETE
     @Path("/{id}")
+    @Operation(summary = "Delete a Board")
     public Response deleteBoard(@Context SecurityContext securityContext, @PathParam("id") Long boardId) {
         try {
+            String userId = securityContext.getUserPrincipal().getName();
             Board board = boardDao.findOne(boardId);
 
-            //TODO : check if user is the real owner
-
+            if (board.getOwner().getId() != Long.parseLong(userId)) { //if current user is not the owner
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             boardDao.delete(board);
+            return Response.ok().build();
+
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong").build();
         }
+    }
+
+    @POST
+    @Path("/{id}/team/{team_id}")
+    @Operation(summary = "Share Board with a given Team")
+    public Response shareBoardWithTeam(@PathParam("id") Long boardId, @PathParam("team_id") Long teamId) {
+
+        Board board = boardDao.findOne(boardId);
+        List<Team> teams = board.getTeams();
+
+        boolean isAlreadyShared = teams.stream().anyMatch(team -> team.getId() == teamId);
+        if (isAlreadyShared) {
+            return Response.noContent().build();
+        }
+
+        teams.add(teamDao.getReference(teamId));
+        boardDao.update(board);
+
         return Response.ok().build();
     }
 }
