@@ -6,7 +6,7 @@ import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import java.util.logging.Logger;
 
 /**
- * RESTfull microservice, based on JAX-RS and JBoss Undertow
+ * RESTFull microservice, based on JAX-RS and JBoss Undertow
  */
 public class RestServer {
 
@@ -20,6 +20,6 @@ public class RestServer {
         ut.start(
                 Undertow.builder().addHttpListener(8090, "localhost")
         );
-        logger.info("JAX-RS based micro-service running!");
+        logger.info("KanbanBoard Api running!");
     }
 }
