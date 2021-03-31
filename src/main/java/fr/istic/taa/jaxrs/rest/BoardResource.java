@@ -113,7 +113,6 @@ public class BoardResource {
         if (isAlreadyShared) {
             return Response.noContent().build();
         }
-
         teams.add(teamDao.getReference(teamId));
         boardDao.update(board);
 
