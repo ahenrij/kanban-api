@@ -50,6 +50,7 @@ public class BoardResource {
 
         List<Board> boards = boardDao.getBoardsByUserId(Long.parseLong(userId));
 
+        System.out.println("");
         return Response.ok().entity(boards).build();
     }
 

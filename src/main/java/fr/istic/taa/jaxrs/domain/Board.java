@@ -16,7 +16,6 @@ public class Board implements Serializable {
     private boolean isPrivate;
     @JsonIgnore
     private User owner;
-    @JsonIgnore
     private List<Section> sections;
     @JsonIgnore
     private List<Team> teams;

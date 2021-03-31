@@ -8,7 +8,6 @@ import fr.istic.taa.jaxrs.domain.Card;
 import fr.istic.taa.jaxrs.domain.Tag;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.CardDto;
-import fr.istic.taa.jaxrs.dto.UserDto;
 import fr.istic.taa.jaxrs.dto.mappers.Mappers;
 import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
@@ -19,9 +18,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.List;
 
-@Path("/card")
+@Path("/api/card")
 @Secured
 @Produces({"application/json"})
 public class CardResource {

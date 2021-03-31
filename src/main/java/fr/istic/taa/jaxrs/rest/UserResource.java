@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
-@Path("/user")
+@Path("/api/user")
 @Secured
 @Produces({"application/json"})
 public class UserResource {

@@ -19,7 +19,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("/team")
+@Path("/api/team")
 @Secured
 @Produces({"application/json"})
 public class TeamResource {

@@ -16,7 +16,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 
-@Path("/tag")
+@Path("/api/tag")
 @Secured
 @Produces({"application/json"})
 public class TagResource {

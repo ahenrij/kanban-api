@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-@Path("/section")
+@Path("/api/section")
 @Secured
 @Produces({"application/json"})
 public class SectionResource {
