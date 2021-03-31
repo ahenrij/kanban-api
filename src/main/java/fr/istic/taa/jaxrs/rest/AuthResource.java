@@ -21,14 +21,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.Optional;
 
-@Path("/api/")
+@Path("/api")
 @Produces({MediaType.APPLICATION_JSON})
 public class AuthResource {
 
     private final UserDao userDao = new UserDao();
 
     @POST
-    @Path("login")
+    @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Authenticate user with credentials.", description = "Returns user's information with access token.")
     public Response login(@Parameter(description = "Login Credentials", required = true) Credentials credentials) {
@@ -49,7 +49,7 @@ public class AuthResource {
     }
 
     @POST
-    @Path("register")
+    @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Register a new user.")
     public Response register(@Parameter(description = "User to register", required = true) UserRegisterDto userRegisterDto) {
@@ -63,7 +63,7 @@ public class AuthResource {
     }
 
     @GET
-    @Path("token")
+    @Path("/token")
     @Secured
     @Operation(summary = "Refresh token of current authenticated user.", description = "Returns new access token and user's id.")
     public Response refreshToken(@Context SecurityContext securityContext) {

@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-@Path("/board")
+@Path("/api/board")
 @Secured
 @Produces(MediaType.APPLICATION_JSON)
 public class BoardResource {
@@ -50,7 +50,6 @@ public class BoardResource {
 
         List<Board> boards = boardDao.getBoardsByUserId(Long.parseLong(userId));
 
-        System.out.println("");
         return Response.ok().entity(boards).build();
     }
 
