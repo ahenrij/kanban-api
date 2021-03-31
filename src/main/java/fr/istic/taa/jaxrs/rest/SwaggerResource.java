@@ -1,5 +1,7 @@
 package fr.istic.taa.jaxrs.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -15,6 +17,7 @@ public class SwaggerResource {
     private static final Logger logger = Logger.getLogger(SwaggerResource.class.getName());
 
     @GET
+    @Operation(summary = "View API Documentation")
     public byte[] Get1() {
         try {
             return Files.readAllBytes(FileSystems.getDefault().getPath("src/main/webapp/swagger/index.html"));
@@ -25,6 +28,7 @@ public class SwaggerResource {
 
     @GET
     @Path("{path:.*}")
+    @Operation(summary = "Targets API Doc files")
     public byte[] Get(@PathParam("path") String path) {
         try {
             return Files.readAllBytes(FileSystems.getDefault().getPath("src/main/webapp/swagger/"+path));
