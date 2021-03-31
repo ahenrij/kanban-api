@@ -3,11 +3,9 @@ package fr.istic.taa.jaxrs.rest;
 import fr.istic.taa.jaxrs.dao.TeamDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
-import fr.istic.taa.jaxrs.domain.Section;
 import fr.istic.taa.jaxrs.domain.Team;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.TeamDto;
-import fr.istic.taa.jaxrs.dto.UserDto;
 import fr.istic.taa.jaxrs.dto.mappers.TeamMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/team")
@@ -26,8 +23,10 @@ import java.util.List;
 @Produces({"application/json"})
 public class TeamResource {
 
-    TeamDao teamDao = new TeamDao();
-    UserDao userDao = new UserDao();
+    private final TeamDao teamDao = new TeamDao();
+    private final UserDao userDao = new UserDao();
+
+    // TEAM ENTITY
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -42,6 +41,7 @@ public class TeamResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a Team.")
     public Response updateTeam(@Parameter(description = "Team to update") TeamDto teamDto) {
         try {
             Team team = teamDao.findOne(teamDto.getId());
@@ -55,35 +55,60 @@ public class TeamResource {
 
     @DELETE
     @Path("/{id}")
+    @Operation(summary = "Delete a Team", description = "Returns Forbidden status if current user is not the owner.")
     public Response deleteTeam(@Context SecurityContext securityContext, @PathParam("id") Long teamId) {
         try {
+            long userId = Long.parseLong(securityContext.getUserPrincipal().getName());
             Team team = teamDao.findOne(teamId);
+            if (team.getManager().getId() != userId) { // only the manager of a team can delete it !
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
             teamDao.delete(team);
+            return Response.ok().build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
-        return Response.ok().build();
     }
 
     @GET
+    @Operation(summary = "List of teams in which user is a member")
     public Response getTeams(@Context SecurityContext securityContext) {
         String userId = securityContext.getUserPrincipal().getName();
-        List<Team> teams = teamDao.getTeamsByUserId(Long.parseLong(userId));
+        List<Team> teams = teamDao.getTeamsSharedWith(Long.parseLong(userId));
         return Response.ok().entity(teams).build();
     }
 
     @GET
+    @Path("/managed")
+    @Operation(summary = "List of teams in which user is the manager")
+    public Response getManagedTeams(@Context SecurityContext securityContext) {
+        String userId = securityContext.getUserPrincipal().getName();
+        List<Team> teams = teamDao.getTeamsManagedBy(Long.parseLong(userId));
+        return Response.ok().entity(teams).build();
+    }
+
+
+    // TEAM MEMBER
+
+    @GET
     @Path("/{id}/member")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getMembers(@PathParam("id") Long teamId) {
-        // return pet
+    @Operation(summary = "List of team members")
+    public Response getMembers(@Context SecurityContext securityContext, @PathParam("id") Long teamId) {
+
+        String userId = securityContext.getUserPrincipal().getName();
+
         Team team = teamDao.findOne(teamId);
         List<User> members = team.getMembers();
-        if (members == null) {
-            return Response.noContent().build();
-        } else {
-            return Response.ok().entity(members).build();
+        members.add(team.getManager()); //add the manager
+
+        //check if user is member of the team
+        boolean isMember = members.stream().anyMatch(user -> user.getId() == Long.parseLong(userId));
+        if (!isMember) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
+
+        return Response.ok().entity(members).build();
     }
 
     @POST
@@ -91,17 +116,20 @@ public class TeamResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addMember(@PathParam("id") Long teamId, User member) {
 
+        //get user by id or email ?
         Team team = teamDao.findOne(teamId);
         List<User> members = team.getMembers();
 
-        if (members.contains(member)) {
+        boolean exists = members.stream().anyMatch(user -> user.getEmail().equals(member.getEmail()));
+        if (exists) {
             return Response.noContent().build();
-        } else {
-            members.add(member);
-            team.setMembers(members);
-            teamDao.update(team);
-            return Response.ok().entity(team).build();
         }
+
+        members.add(member);
+        team.setMembers(members);
+        teamDao.update(team);
+
+        return Response.ok().entity(member).build();
     }
 
     @GET
@@ -109,13 +137,8 @@ public class TeamResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getBoards(@PathParam("id") Long teamId) {
 
-        Team team = teamDao.findOne(teamId);
-        List<Board> boards = team.getBoards();
-        if (boards == null) {
-            return Response.noContent().build();
-        } else {
-            return Response.ok().entity(boards).build();
-        }
+        List<Board> boards = teamDao.getTeamBoards(teamId);
+        return Response.ok().entity(boards).build();
     }
 }
 

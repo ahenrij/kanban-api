@@ -66,7 +66,7 @@ public class TagResource {
     @Path("/{id}")
     public Response deleteTag(@Context SecurityContext securityContext, @PathParam("id") Long tagId) {
         try {
-            Tag tag = tagDao.findOne(tagId);
+            Tag tag = tagDao.getReference(tagId);
             tagDao.delete(tag);
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();

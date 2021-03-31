@@ -35,7 +35,7 @@ public class Team implements Serializable {
         this.title = title;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     public User getManager() {
         return manager;
     }

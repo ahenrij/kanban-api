@@ -5,6 +5,7 @@ import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.Credentials;
 import fr.istic.taa.jaxrs.dto.UserDto;
+import fr.istic.taa.jaxrs.dto.UserRegisterDto;
 import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Hashing;
 import fr.istic.taa.jaxrs.utils.JwtUtil;
@@ -51,8 +52,10 @@ public class AuthResource {
     @Path("register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Register a new user.")
-    public Response register(@Parameter(description = "User to register", required = true) User user) {
+    public Response register(@Parameter(description = "User to register", required = true) UserRegisterDto userRegisterDto) {
 
+        User user = new User();
+        UserMapper.INSTANCE.updateAttrs(userRegisterDto, user);
         //Hash password before saving
         user.setPassword(Hashing.hash(user.getPassword()));
         userDao.save(user);

@@ -19,6 +19,12 @@ public class UserResource {
     private final UserDao userDao = new UserDao();
 
     @GET
+    @Operation(summary = "Users list")
+    public Response getUsers() {
+        return Response.ok().entity(userDao.findAll()).build();
+    }
+
+    @GET
     @Path("/{id}")
     @Operation(summary = "Get user's information by id")
     public Response getUserById(@PathParam("id") Long userId) {
