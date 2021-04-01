@@ -19,7 +19,7 @@ public class UserResource {
     private final UserDao userDao = new UserDao();
 
     @GET
-    @Operation(summary = "Users list")
+    @Operation(summary = "Users List")
     public Response getUsers() {
         return Response.ok().entity(userDao.findAll()).build();
     }
