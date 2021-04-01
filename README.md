@@ -16,7 +16,7 @@ You will need to create an environment with two variables :
 * __url__: http://localhost:8090/api
 * __access_token__: (empty) - the access token is filled automatically right after login request succeeded.
 
-Note that all routes except those for authentication (__login__ and __register__), require the access token from __login__ response,
+NOTE : All routes except those for authentication (__login__ and __register__), require the access token from __login__ response,
 as Bearer Token in Authorization Header, to add a security layer to the API and ease getting the current user making a request.\
 The access token is a Json Web Token (JWT).
 
