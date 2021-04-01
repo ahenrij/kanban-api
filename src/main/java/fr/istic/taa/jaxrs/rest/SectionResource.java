@@ -4,7 +4,6 @@ import fr.istic.taa.jaxrs.dao.BoardDao;
 import fr.istic.taa.jaxrs.dao.SectionDao;
 import fr.istic.taa.jaxrs.domain.Section;
 import fr.istic.taa.jaxrs.dto.SectionDto;
-import fr.istic.taa.jaxrs.dto.mappers.Mappers;
 import fr.istic.taa.jaxrs.dto.mappers.SectionMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +29,7 @@ public class SectionResource {
     public Response createSection(@Context SecurityContext securityContext, @Parameter(description = "Section to create") SectionDto sectionDto) {
 
         Long boardId = sectionDto.getBoardId();
-        Section section = Mappers.INSTANCE.map(sectionDto);
+        Section section = SectionMapper.INSTANCE.map(sectionDto);
         section.setBoard(boardDao.getReference(boardId));
 
         sectionDao.save(section);

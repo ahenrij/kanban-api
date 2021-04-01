@@ -2,9 +2,11 @@ package fr.istic.taa.jaxrs.rest;
 
 import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import fr.istic.taa.jaxrs.dao.BoardDao;
+import fr.istic.taa.jaxrs.dao.SectionDao;
 import fr.istic.taa.jaxrs.dao.TeamDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
+import fr.istic.taa.jaxrs.domain.Section;
 import fr.istic.taa.jaxrs.domain.Team;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.BoardDto;
@@ -28,6 +30,7 @@ public class BoardResource {
     private final UserDao userDao = new UserDao();
     private final BoardDao boardDao = new BoardDao();
     private final TeamDao teamDao = new TeamDao();
+    private final SectionDao sectionDao = new SectionDao();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -56,12 +59,25 @@ public class BoardResource {
 
     @GET
     @Path("/{id}")
-    @Operation(summary = "Get Board's content", description = "Get board's sections, cards, and tags...")
+    @Operation(summary = "Get Board's attributes")
     public Response getBoard(@PathParam("id") Long boardId) {
 
         try {
             Board board = boardDao.getBoard(boardId);
             return Response.ok(board).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/{id}/section")
+    @Operation(summary = "Get Board's section", description = "Get board's sections, cards, and tags...")
+    public Response getSections(@PathParam("id") Long boardId) {
+
+        try {
+            List<Section> sections = sectionDao.getSectionsByBoardId(boardId);
+            return Response.ok(sections).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();
         }
@@ -106,15 +122,15 @@ public class BoardResource {
     @Operation(summary = "Share Board with a given Team")
     public Response shareBoardWithTeam(@PathParam("id") Long boardId, @PathParam("team_id") Long teamId) {
 
-        Board board = boardDao.findOne(boardId);
-        List<Team> teams = board.getTeams();
+        Team team = teamDao.findOne(teamId);
+        List<Board> boards = team.getBoards();
 
-        boolean isAlreadyShared = teams.stream().anyMatch(team -> team.getId() == teamId);
+        boolean isAlreadyShared = boards.stream().anyMatch(board -> board.getId() == boardId);
         if (isAlreadyShared) {
             return Response.noContent().build();
         }
-        teams.add(teamDao.getReference(teamId));
-        boardDao.update(board);
+        boards.add(boardDao.getReference(boardId));
+        teamDao.update(team);
 
         return Response.ok().build();
     }

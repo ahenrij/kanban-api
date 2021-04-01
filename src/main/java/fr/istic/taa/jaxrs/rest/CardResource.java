@@ -9,7 +9,6 @@ import fr.istic.taa.jaxrs.domain.Tag;
 import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.CardDto;
 import fr.istic.taa.jaxrs.dto.mappers.CardMapper;
-import fr.istic.taa.jaxrs.dto.mappers.Mappers;
 import fr.istic.taa.jaxrs.dto.mappers.UserMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +36,7 @@ public class CardResource {
     public Response createCard(@Context SecurityContext securityContext, @Parameter(description = "Card to create") CardDto cardDto) {
 
         Long sectionId = cardDto.getSectionId();
-        Card card = Mappers.INSTANCE.map(cardDto);
+        Card card = CardMapper.INSTANCE.map(cardDto);
         card.setSection(sectionDao.findOne(sectionId));
 
         cardDao.save(card);
@@ -56,7 +55,7 @@ public class CardResource {
                 card.setSection(sectionDao.getReference(cardDto.getSectionId()));
             }
             cardDao.update(card);
-            return Response.ok().entity(Mappers.INSTANCE.map(cardDto)).build();
+            return Response.ok().entity(CardMapper.INSTANCE.map(cardDto)).build();
 
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();

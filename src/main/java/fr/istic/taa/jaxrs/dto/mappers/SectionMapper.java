@@ -3,6 +3,7 @@ package fr.istic.taa.jaxrs.dto.mappers;
 import fr.istic.taa.jaxrs.domain.Section;
 import fr.istic.taa.jaxrs.dto.SectionDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper
@@ -13,4 +14,8 @@ public interface SectionMapper {
     void updateAttrs(SectionDto dto, @MappingTarget Section entity);
 
     SectionDto map(Section entity);
+
+    @Mapping(target = "board", ignore = true)
+    @Mapping(target = "cards", ignore = true)
+    Section map(SectionDto sectionDto);
 }

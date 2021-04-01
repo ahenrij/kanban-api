@@ -1,5 +1,6 @@
 package fr.istic.taa.jaxrs.rest;
 
+import fr.istic.taa.jaxrs.dao.BoardDao;
 import fr.istic.taa.jaxrs.dao.TeamDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
@@ -26,6 +27,7 @@ public class TeamResource {
 
     private final TeamDao teamDao = new TeamDao();
     private final UserDao userDao = new UserDao();
+    private final BoardDao boardDao = new BoardDao();
 
     // TEAM ENTITY
 
@@ -154,7 +156,7 @@ public class TeamResource {
     public Response getBoards(@PathParam("id") Long teamId) {
 
         try {
-            List<Board> boards = teamDao.getTeamBoards(teamId);
+            List<Board> boards = boardDao.getBoardsByTeamId(teamId);
             return Response.ok().entity(boards).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Something went wrong: " + e.getMessage()).build();

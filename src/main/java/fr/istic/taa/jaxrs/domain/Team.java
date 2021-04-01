@@ -58,7 +58,7 @@ public class Team implements Serializable {
         this.members = members;
     }
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "TeamBoard",
             joinColumns = @JoinColumn(name = "team_id"),

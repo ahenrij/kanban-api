@@ -43,12 +43,4 @@ public class TeamDao extends AbstractJpaDao<Long, Team> {
                 .setParameter("id", teamId)
                 .getResultList();
     }
-
-    public List<Board> getTeamBoards(Long teamId) {
-
-        return this.entityManager
-                .createQuery("SELECT b FROM " + clazz.getName() + " t LEFT JOIN t.boards b WHERE t.id = :id", Board.class)
-                .setParameter("id", teamId)
-                .getResultList();
-    }
 }
