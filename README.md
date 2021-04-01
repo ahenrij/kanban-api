@@ -21,3 +21,7 @@ as Bearer Token in Authorization Header, to add a security layer to the API and 
 The access token is a Json Web Token (JWT).
 
 You may also want to have a look at the [KanbanBoard Class Diagram](https://drive.google.com/file/d/1IRkcH4XR_PGaDw5jp9CDikefMnfvkEbJ/view?usp=sharing)
+
+### Contributors:
+* Henri AÏDASSO
+* Octaviana DIACONU
