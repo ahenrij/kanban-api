@@ -23,6 +23,7 @@ import javax.ws.rs.core.Application;
 
 import fr.istic.taa.jaxrs.rest.*;
 import fr.istic.taa.jaxrs.utils.AuthFilter;
+import fr.istic.taa.jaxrs.utils.CorsFilter;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 
 public class RestApplication extends Application {
@@ -35,7 +36,6 @@ public class RestApplication extends Application {
 
         clazzes.add(OpenApiResource.class);
         clazzes.add(AuthResource.class);
-        clazzes.add(AuthFilter.class);
         clazzes.add(UserResource.class);
         clazzes.add(BoardResource.class);
         clazzes.add(SectionResource.class);
@@ -44,6 +44,10 @@ public class RestApplication extends Application {
         clazzes.add(TeamResource.class);
         // Swagger
         clazzes.add(SwaggerResource.class);
+
+        //Filters
+        clazzes.add(AuthFilter.class);
+        clazzes.add(CorsFilter.class);
 
         return clazzes;
     }
