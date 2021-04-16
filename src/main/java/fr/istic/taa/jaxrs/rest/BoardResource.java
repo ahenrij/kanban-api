@@ -1,6 +1,5 @@
 package fr.istic.taa.jaxrs.rest;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import fr.istic.taa.jaxrs.dao.BoardDao;
 import fr.istic.taa.jaxrs.dao.SectionDao;
 import fr.istic.taa.jaxrs.dao.TeamDao;
@@ -8,7 +7,6 @@ import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Board;
 import fr.istic.taa.jaxrs.domain.Section;
 import fr.istic.taa.jaxrs.domain.Team;
-import fr.istic.taa.jaxrs.domain.User;
 import fr.istic.taa.jaxrs.dto.BoardDto;
 import fr.istic.taa.jaxrs.dto.mappers.BoardMapper;
 import fr.istic.taa.jaxrs.utils.Secured;
@@ -50,10 +48,8 @@ public class BoardResource {
     public Response getBoards(@Context SecurityContext securityContext) {
 
         String userId = securityContext.getUserPrincipal().getName();
-
         List<Board> boards = boardDao.getBoardsByUserId(Long.parseLong(userId));
-
-        return Response.ok().entity(boards).build();
+        return Response.ok().status(Response.Status.OK).entity(boards).build();
     }
 
 

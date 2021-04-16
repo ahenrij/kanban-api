@@ -153,6 +153,7 @@ public class TeamResource {
     @GET
     @Path("/{id}/board")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Get boards shared with a given team")
     public Response getBoards(@PathParam("id") Long teamId) {
 
         try {
