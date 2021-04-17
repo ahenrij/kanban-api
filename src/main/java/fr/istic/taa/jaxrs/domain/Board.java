@@ -64,7 +64,7 @@ public class Board implements Serializable {
         this.owner = owner;
     }
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     public List<Section> getSections() {
         return sections;
     }
