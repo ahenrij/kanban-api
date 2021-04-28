@@ -6,8 +6,8 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-04-20T16:39:57+0200",
-    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 11.0.10 (Amazon.com Inc.)"
+    date = "2021-04-28T19:41:15+0200",
+    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 11.0.11 (Amazon.com Inc.)"
 )
 public class TeamMapperImpl implements TeamMapper {
 

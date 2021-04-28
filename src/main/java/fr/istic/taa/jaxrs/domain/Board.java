@@ -11,6 +11,8 @@ public class Board implements Serializable {
 
     private long id;
     private String title;
+    @Column(length = 500)
+    private String description;
     private String color; //Hex board color
     @Column(columnDefinition="tinyint(1) default 1")
     private boolean isPrivate;
@@ -37,6 +39,14 @@ public class Board implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getColor() {
