@@ -14,7 +14,7 @@ public class SectionDao extends AbstractJpaDao<Long, Section> {
     public List<Section> getSectionsByBoardId(Long boardId) {
 
         return this.entityManager
-                .createQuery("SELECT s FROM " + clazz.getName() + " s WHERE s.board.id = :boardId", clazz)
+                .createQuery("SELECT s FROM " + clazz.getName() + " s join fetch s.cards c WHERE s.board.id = :boardId", clazz)
                 .setParameter("boardId", boardId)
                 .getResultList();
     }

@@ -51,7 +51,7 @@ public class Section implements Serializable {
         this.board = board;
     }
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
     public List<Card> getCards() {
         return cards;
     }

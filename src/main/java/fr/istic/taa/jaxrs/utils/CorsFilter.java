@@ -19,7 +19,7 @@ public class CorsFilter implements ContainerResponseFilter {
       responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
       responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
 
-      // For HTTP OPTIONS verb/method reply with ACCEPTED status code -- per CORS handshake
+      // return no content status code for preflight requests
       if (requestContext.getMethod().equals("OPTIONS")) {
          responseContext.setStatus(HttpServletResponse.SC_NO_CONTENT);
       }
