@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    name: kanbanboard_db
+    image: mysql:8.0.12
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD="OuPfme45oAM6m6S8lqy4PQfxlYFlCnmPzyaloZ5Zw="
+    volumes:
+      - ./kanbanboard-data:/var/lib/mysql
+    networks:
+      - kanban
+
+  adminer:
+    name: kanbanboard_adminer
+    image: phpmyadmin/phpmyadmin:edge
+    ports:
+      - 8081:80
+    environment:
+      - PMA_HOST=kanbanboard_db
+    networks:
+      - kanban
