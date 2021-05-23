@@ -7,7 +7,7 @@ services:
     restart: always
     ports:
       - '3306:3306'
-    volume:
+    volumes:
       - ./kabanboard-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
