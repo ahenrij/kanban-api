@@ -2,7 +2,8 @@
 
 1. Import this project in your favorite IDE, 
 2. Create a SQL Database named : kanbanboard (running by default on port 3306)
-4. Start the backend. There is a main class to start the backend
+2 bis. Or run docker-compose up -d
+4. Start the backend by running the main java class.
 
 You can change database connection configurations in __persistence.xml__ file.
 
