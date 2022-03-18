@@ -8,15 +8,16 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - ./kabanboard-data:/var/lib/mysql
+      - ./kanbanboard-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: my-secret-pw
+      - MYSQL_DATABASE=kanbanboard
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
 
-  app:
+  adminer:
     depends_on:
       - db
     image: phpmyadmin/phpmyadmin
-    container_name: kanban_phpmyadmin
+    container_name: kanban_adminer
     restart: always
     ports:
       - '8081:80'

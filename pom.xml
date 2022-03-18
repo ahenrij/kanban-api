@@ -2,17 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>fr.istic.taa</groupId>
-	<artifactId>jaxrs-example</artifactId>
+	<groupId>fr.istic.sir</groupId>
+	<artifactId>kanban-board</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>jaxrs-example</name>
+	<name>kanban-board</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
 	</properties>
 	<dependencies>
-
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -46,7 +45,6 @@
 		</dependency>
 
 		<!-- ==== REST API ==== -->
-
 		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-undertow -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
@@ -61,7 +59,7 @@
 			<version>4.5.6.Final</version>
 		</dependency>
 
-	<!-- OpenAPI-->
+		<!-- OpenAPI-->
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-jaxrs2</artifactId>
