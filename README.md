@@ -2,7 +2,8 @@
 
 1. Import this project in your favorite IDE, 
 2. Create a SQL Database named : kanbanboard (running by default on port 3306)
-4. Start the backend. There is a main class to start the backend
+2. (2. bis) Or run docker-compose up -d
+4. Start the backend by running the main java class __RestServer.java__.
 
 You can change database connection configurations in __persistence.xml__ file.
 
@@ -21,7 +22,3 @@ as Bearer Token in Authorization Header, to add a security layer to the API and 
 The access token is a Json Web Token (JWT).
 
 You may also want to have a look at the [KanbanBoard Class Diagram](https://drive.google.com/file/d/1IRkcH4XR_PGaDw5jp9CDikefMnfvkEbJ/view?usp=sharing)
-
-### Contributors:
-* Henri AÏDASSO
-* Octaviana DIACONU
